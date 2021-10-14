@@ -5,8 +5,6 @@ requirements:
   - docker
 configuration:
   properties:
-    build-context:
-      type: string
     artifact-path:
       type: string
     output-path:
