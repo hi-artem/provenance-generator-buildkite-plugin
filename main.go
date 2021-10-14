@@ -1,10 +1,7 @@
 package main
 
-import (
-  "fmt"
-)
+import "fmt"
 
 func main() {
-  payload := "test"
-	fmt.Println("Provenance:\n" + string(payload))
+	fmt.Println("hello world")
 }

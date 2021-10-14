@@ -1,7 +1,8 @@
 name: Provenance Generator
 description: SLSA provenance generator for your build artifacts
 author: https://github.com/hi-artem
-requirements: []
+requirements:
+  - docker
 configuration:
   properties:
     build-context:
