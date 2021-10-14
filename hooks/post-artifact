@@ -3,8 +3,4 @@ env | grep BUILDKITE
 
 DIR="$(cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd)"
 
-ls $DIR/../
-
-docker run -it --rm -v "$DIR/../lib:/lib:ro" --entrypoint ls golang:1.16-alpine /
-docker run -it --rm -v "$DIR/../lib:/lib:ro" --entrypoint ls golang:1.16-alpine /lib
-#docker run -it --rm -v "$DIR/../lib:/lib:ro" --entrypoint go golang:1.16-alpine run /lib/main.go
+(cd $DIR/.. && docker run -it --rm -v "$(pwd):/plugin:ro" --entrypoint go golang:1.16-alpine run /plugin/lib/main.go)
