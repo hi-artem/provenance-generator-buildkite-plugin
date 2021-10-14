@@ -1,3 +1,5 @@
 env | grep BUILDKITE
 
-docker run -it --rm -v "$PWD:/plugin:ro" --entrypoint go golang:1.16-alpine run /plugin/main.go
+pwd && ls
+
+docker run -it --rm -v "$(pwd):/plugin:ro" --entrypoint go golang:1.16-alpine run /plugin/main.go
