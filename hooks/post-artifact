@@ -1,6 +1,19 @@
+#!/bin/bash
+
 env | grep BUILDKITE
 
 
 DIR="$(cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd)"
 
-(cd $DIR/.. && docker run -it --rm -v "$(pwd):/plugin:ro" --entrypoint go golang:1.16-alpine run /plugin/lib/main.go)
+ls $DIR
+
+ls $DIR/..
+
+(
+  cd $DIR/.. && \
+    docker run -it --rm -v "$(pwd):/plugin:ro" --entrypoint go golang:1.16-alpine \
+      run /plugin/lib/main.go \
+      --artifact_path /plugin/build \
+      --build_context "{\"build_url\":\"$BUILDKITE_BUILD_URL\", \"commit\": \"$BUILDKITE_COMMIT\", \"step_id\": \"$BUILDKITE_STEP_ID\" \"repository\":\"$BUILDKITE_REPO\" }" \
+      --agent_context "{\"agent_name\": \"$BUILDKITE_AGENT_NAME\"}"
+)
