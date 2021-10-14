@@ -1,8 +1,5 @@
 #!/bin/bash
 
-env | grep BUILDKITE
-
-
 DIR="$(cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd)"
 
 (

@@ -28,18 +28,37 @@ improvement from the ecosystem's current state.
 
 ## Example
 
-Add the following to your `pipeline.yml`:
+Generate provenance for single build artifact:
 
 ```yml
 steps:
   - label: "🔨 Create artifact and generate provenance"
     command:
-      - "mkdir build && echo 'build artifact' > build/artifact.txt"
+      - "mkdir build"
+      - "echo 'build artifact' > build/artifact.txt"
     artifact_paths:
       - "build/*"
     plugins:
       - hi-artem/provenance-generator#v1.0.10:
           artifact-path: "build/artifact.txt"
+          output-path: "provenance.json"
+```
+
+Generate provenance for multiple build artifacts:
+
+```yml
+steps:
+  - label: "🔨 Create artifacts and generate provenance"
+    command:
+      - "mkdir build"
+      - "echo 'build artifact 1' > build/artifact1.txt"
+      - "echo 'build artifact 2' > build/artifact2.txt"
+      - "echo 'build artifact 2' > build/artifact3.txt"
+    artifact_paths:
+      - "build/*"
+    plugins:
+      - hi-artem/provenance-generator#v1.1.1:
+          artifact-path: "build/*"
           output-path: "provenance.json"
 ```
 
