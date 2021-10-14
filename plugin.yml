@@ -1,0 +1,13 @@
+name: Provenance Generator
+description: SLSA provenance generator for your build artifacts
+author: https://github.com/hi-artem
+requirements: []
+configuration:
+  properties:
+    build-context:
+      type: string
+    artifact-path:
+      type: string
+    output-path:
+      type: string
+  additionalProperties: false
