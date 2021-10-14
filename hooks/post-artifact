@@ -5,10 +5,12 @@ DIR="$(cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd)"
 (
   cd $DIR/.. && \
     mkdir local-artifacts && \
-    buildkite-agent artifact download $BUILDKITE_PLUGIN_PROVENANCE_GENERATOR_ARTIFACT_PATH local-artifacts --step "$BUILDKITE_JOB_ID"&& \
+    buildkite-agent artifact download $BUILDKITE_PLUGIN_PROVENANCE_GENERATOR_ARTIFACT_PATH local-artifacts --step "$BUILDKITE_JOB_ID" && \
     docker run -it --rm -v "$(pwd):/plugin:ro" --entrypoint go golang:1.16-alpine \
       run /plugin/lib/main.go \
+      --output_path /plugin/$BUILDKITE_PLUGIN_PROVENANCE_GENERATOR_OUTPUT_PATH \
       --artifact_path /plugin/local-artifacts \
       --build_context "{\"build_url\":\"$BUILDKITE_BUILD_URL\", \"commit\": \"$BUILDKITE_COMMIT\", \"step_id\": \"$BUILDKITE_STEP_ID\", \"repository\":\"$BUILDKITE_REPO\"}" \
-      --agent_context "{\"agent_name\": \"$BUILDKITE_AGENT_NAME\"}"
+      --agent_context "{\"agent_name\": \"$BUILDKITE_AGENT_NAME\"}" && \
+    buildkite-agent artifact upload $BUILDKITE_PLUGIN_PROVENANCE_GENERATOR_OUTPUT_PATH
 )
