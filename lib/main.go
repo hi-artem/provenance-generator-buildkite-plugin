@@ -14,14 +14,14 @@ import (
 )
 
 const (
-	BuildkiteIdSuffix   = "/Attestations/Buildkite@v1"
-	TypeId               = "https://buildkite.com/Attestations/BuildkiteBuild@v1"
-	PayloadContentType   = "application/vnd.in-toto+json"
+	BuildkiteIdSuffix  = "/Attestations/Buildkite@v1"
+	TypeId             = "https://buildkite.com/Attestations/BuildkiteBuild@v1"
+	PayloadContentType = "application/vnd.in-toto+json"
 )
 
 var (
-	artifactPath  = flag.String("artifact_path", "", "The file or dir path of the artifacts for which provenance should be generated.")
-	outputPath    = flag.String("output_path", "provenance.json", "The path to which the generated provenance should be written.")
+	artifactPath = flag.String("artifact_path", "", "The file or dir path of the artifacts for which provenance should be generated.")
+	outputPath   = flag.String("output_path", "provenance.json", "The path to which the generated provenance should be written.")
 	buildContext = flag.String("build_context", "", "The '${build}' context value.")
 	agentContext = flag.String("agent_context", "", "The '${agent}' context value.")
 )
@@ -81,10 +81,10 @@ type AnyContext struct {
 }
 
 type BuildContext struct {
-	Repository          string          `json:"repository"`
-	BuildURL            string          `json:"build_url"`
-	Commit              string          `json:"commit"`
-	StepID              string          `json:"step_id"`
+	Repository string `json:"repository"`
+	BuildURL   string `json:"build_url"`
+	Commit     string `json:"commit"`
+	StepID     string `json:"step_id"`
 }
 
 type AgentContext struct {
@@ -184,7 +184,7 @@ func main() {
 	stmt.Predicate.Metadata.BuildInvocationId = build.BuildURL
 	stmt.Predicate.Recipe.EntryPoint = build.StepID
 	stmt.Predicate.Materials = append(stmt.Predicate.Materials, Item{URI: build.Repository, Digest: DigestSet{"sha1": build.Commit}})
-  stmt.Predicate.Builder.Id = build.Repository + BuildkiteIdSuffix
+	stmt.Predicate.Builder.Id = build.Repository + BuildkiteIdSuffix
 
 	// NOTE: At L1, writing the in-toto Statement type is sufficient but, at
 	// higher SLSA levels, the Statement must be encoded and wrapped in an
