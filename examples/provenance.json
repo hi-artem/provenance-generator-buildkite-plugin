@@ -1,0 +1,54 @@
+{
+  "_type": "https://in-toto.io/Statement/v0.1",
+  "subject": [
+    {
+      "name": "build/artifact1.txt",
+      "digest": {
+        "sha256": "22f8dea3c3af24b5bccd96afc347c04ecc88360dffaded7eeccea5b72fa49c81"
+      }
+    },
+    {
+      "name": "build/artifact2.txt",
+      "digest": {
+        "sha256": "b1f3f414dbb4c50214ee006a73103802bb93752201e2646bd4437870931a3b27"
+      }
+    },
+    {
+      "name": "build/artifact3.txt",
+      "digest": {
+        "sha256": "b1f3f414dbb4c50214ee006a73103802bb93752201e2646bd4437870931a3b27"
+      }
+    }
+  ],
+  "predicateType": "https://slsa.dev/provenance/v0.1",
+  "predicate": {
+    "builder": {
+      "id": "git@github.com:virtru/devhacks.git/Attestations/Buildkite@v1"
+    },
+    "metadata": {
+      "buildInvocationId": "https://buildkite.com/virtru/buildkite-provenance-test/builds/32",
+      "completeness": {
+        "arguments": true,
+        "environment": false,
+        "materials": false
+      },
+      "reproducible": false,
+      "buildFinishedOn": "2021-10-14T21:10:26Z"
+    },
+    "recipe": {
+      "type": "https://buildkite.com/Attestations/BuildkiteBuild@v1",
+      "definedInMaterial": 0,
+      "entryPoint": "582d8e7a-d4a8-4961-98da-32a192442dba",
+      "arguments": null,
+      "environment": null
+    },
+    "materials": [
+      {
+        "uri": "git@github.com:virtru/devhacks.git",
+        "digest": {
+          "sha1": "64e280b17f7b6f394e909bbe9f7c40fc686eff2e"
+        }
+      }
+    ]
+  }
+}

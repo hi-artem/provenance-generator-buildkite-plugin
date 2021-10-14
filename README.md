@@ -26,7 +26,7 @@ automated analysis and auditing. Additionally, moving build definitions into
 source control and onto well-supported, secure build systems represents a marked
 improvement from the ecosystem's current state.
 
-## Example
+## Example Usage
 
 Generate provenance for single build artifact:
 
@@ -61,6 +61,11 @@ steps:
           artifact-path: "build/*"
           output-path: "provenance.json"
 ```
+
+## Security and Support
+
+This is demo repo and is not intended to be used in production contexts. 
+As such, we cannot make any commitments of future support.
 
 ## Contributing
 
