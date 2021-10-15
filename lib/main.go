@@ -96,10 +96,13 @@ type BuildContext struct {
 	BuildURL   string `json:"build_url"`
 	Commit     string `json:"commit"`
 	StepID     string `json:"step_id"`
+	Command    string `json:"command"`
 }
 
 type AgentContext struct {
-	AgentName string `json:"agent_name"`
+	Name         string `json:"agent_name"`
+	ID           string `json:"agent_id"`
+	Organization string `json:"agent_organization"`
 }
 
 // subjects walks the file or directory at "root" and hashes all files.
@@ -198,10 +201,12 @@ func main() {
 		panic(err)
 	}
 	build := context.BuildContext
+	agent := context.AgentContext
+
 	stmt.Predicate.Metadata.BuildInvocationId = build.BuildURL
-	stmt.Predicate.Recipe.EntryPoint = build.StepID
+	stmt.Predicate.Recipe.EntryPoint = build.Command
 	stmt.Predicate.Materials = append(stmt.Predicate.Materials, Item{URI: build.Repository, Digest: DigestSet{"sha1": build.Commit}})
-	stmt.Predicate.Builder.Id = build.Repository + BuildkiteIdSuffix
+	stmt.Predicate.Builder.Id = "buildkite.com/organizations/" + agent.Organization + "/agents/" + agent.ID
 
 	// NOTE: At L1, writing the in-toto Statement type is sufficient but, at
 	// higher SLSA levels, the Statement must be encoded and wrapped in an

@@ -1,18 +1,25 @@
 #!/bin/bash
 
-DIR="$(cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd)"
+starting_directory="$(cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd)"
 
-(
-  cd $DIR/.. && \
-    rm -rf local-artifacts && mkdir local-artifacts && \
-    echo "Downloading build artifacts" && \
-    buildkite-agent artifact download "*" local-artifacts --step "$BUILDKITE_JOB_ID" && \
-    docker run -it --rm -v "$(pwd):/plugin" --entrypoint go golang:1.16-alpine \
+cd $starting_directory/..
+
+echo "Prepare to download build artifacts"    
+rm -rf local-artifacts && mkdir local-artifacts 
+
+echo "Downloading build artifacts"    
+buildkite-agent artifact download "*" local-artifacts --step "$BUILDKITE_JOB_ID"
+
+echo "Generating provenance file using Docker golang container"
+docker run -it --rm -v "$(pwd):/plugin" --entrypoint go golang:1.16-alpine \
       run /plugin/lib/main.go \
       --output_path /plugin/$BUILDKITE_PLUGIN_PROVENANCE_GENERATOR_OUTPUT_PATH \
       --artifact_path /plugin/local-artifacts \
-      --build_context "{\"build_url\":\"$BUILDKITE_BUILD_URL\", \"commit\": \"$BUILDKITE_COMMIT\", \"step_id\": \"$BUILDKITE_STEP_ID\", \"repository\":\"$BUILDKITE_REPO\"}" \
-      --agent_context "{\"agent_name\": \"$BUILDKITE_AGENT_NAME\"}" && \
-    buildkite-agent artifact upload $BUILDKITE_PLUGIN_PROVENANCE_GENERATOR_OUTPUT_PATH && \
-    rm -rf local-artifacts
-)
+      --build_context "{\"build_url\":\"$BUILDKITE_BUILD_URL\", \"command\": \"$BUILDKITE_COMMAND\", \"commit\": \"$BUILDKITE_COMMIT\", \"step_id\": \"$BUILDKITE_STEP_ID\", \"repository\":\"$BUILDKITE_REPO\"}" \
+      --agent_context "{\"agent_name\": \"$BUILDKITE_AGENT_NAME\", \"agent_id\": \"$BUILDKITE_AGENT_ID\", \"agent_organization\":\"$BUILDKITE_ORGANIZATION_SLUG\"}"
+
+echo "Upload provenance file to artifact storage"
+buildkite-agent artifact upload $BUILDKITE_PLUGIN_PROVENANCE_GENERATOR_OUTPUT_PATH
+
+echo "Clean-up removing temporary files"
+rm -rf local-artifacts && cd -
