@@ -92,11 +92,11 @@ type AnyContext struct {
 }
 
 type BuildContext struct {
-	Repository string `json:"repository"`
-	BuildURL   string `json:"build_url"`
-	Commit     string `json:"commit"`
-	StepID     string `json:"step_id"`
-	Command    string `json:"command"`
+	Repository    string `json:"repository"`
+	BuildURL      string `json:"build_url"`
+	Commit        string `json:"commit"`
+	StepID        string `json:"step_id"`
+	CommandBase64 string `json:"command_base64"`
 }
 
 type AgentContext struct {
@@ -204,7 +204,7 @@ func main() {
 	agent := context.AgentContext
 
 	stmt.Predicate.Metadata.BuildInvocationId = build.BuildURL
-	stmt.Predicate.Recipe.EntryPoint = build.Command
+	stmt.Predicate.Recipe.EntryPoint = build.CommandBase64
 	stmt.Predicate.Materials = append(stmt.Predicate.Materials, Item{URI: build.Repository, Digest: DigestSet{"sha1": build.Commit}})
 	stmt.Predicate.Builder.Id = "buildkite.com/organizations/" + agent.Organization + "/agents/" + agent.ID
 
