@@ -19,8 +19,19 @@ const (
 	PayloadContentType = "application/vnd.in-toto+json"
 )
 
+type arrayFlags []string
+
+func (i *arrayFlags) String() string {
+	return ""
+}
+
+func (i *arrayFlags) Set(value string) error {
+	*i = append(*i, value)
+	return nil
+}
+
 var (
-	artifactPath = flag.String("artifact_path", "", "The file or dir path of the artifacts for which provenance should be generated.")
+	artifactPath arrayFlags
 	outputPath   = flag.String("output_path", "provenance.json", "The path to which the generated provenance should be written.")
 	buildContext = flag.String("build_context", "", "The '${build}' context value.")
 	agentContext = flag.String("agent_context", "", "The '${agent}' context value.")
@@ -122,7 +133,7 @@ func subjects(root string) ([]Subject, error) {
 
 func parseFlags() {
 	flag.Parse()
-	if *artifactPath == "" {
+	if len(artifactPath) < 1 {
 		fmt.Println("No value found for required flag: --artifact_path\n")
 		flag.Usage()
 		os.Exit(1)
@@ -145,16 +156,22 @@ func parseFlags() {
 }
 
 func main() {
+	flag.Var(&artifactPath, "artifact_path", "The file or dir path of the artifacts for which provenance should be generated.")
 	parseFlags()
 	stmt := Statement{PredicateType: "https://slsa.dev/provenance/v0.1", Type: "https://in-toto.io/Statement/v0.1"}
-	subjects, err := subjects(*artifactPath)
-	if os.IsNotExist(err) {
-		fmt.Println(fmt.Sprintf("Resource path not found: [provided=%s]", *artifactPath))
-		os.Exit(1)
-	} else if err != nil {
-		panic(err)
+
+	var allSubjects []Subject
+	for _, path := range artifactPath {
+		subjects, err := subjects(path)
+		if os.IsNotExist(err) {
+			fmt.Println(fmt.Sprintf("Resource path not found: [provided=%s]", path))
+			os.Exit(1)
+		} else if err != nil {
+			panic(err)
+		}
+		allSubjects = append(allSubjects, subjects...)
 	}
-	stmt.Subject = append(stmt.Subject, subjects...)
+	stmt.Subject = append(stmt.Subject, allSubjects...)
 	stmt.Predicate = Predicate{
 		Builder{},
 		Metadata{
