@@ -18,27 +18,33 @@
       "digest": {
         "sha256": "b1f3f414dbb4c50214ee006a73103802bb93752201e2646bd4437870931a3b27"
       }
+    },
+    {
+      "name": "postbuild/artifact3.txt",
+      "digest": {
+        "sha256": "066cec62e680c890ba4f2f40e753d686570f1a5c01f7f130f549fba010eef45c"
+      }
     }
   ],
   "predicateType": "https://slsa.dev/provenance/v0.1",
   "predicate": {
     "builder": {
-      "id": "git@github.com:virtru/devhacks.git/Attestations/Buildkite@v1"
+      "id": "buildkite.com/organizations/virtru/agents/799e9915-85ee-446a-b981-18c89885fc8f"
     },
     "metadata": {
-      "buildInvocationId": "https://buildkite.com/virtru/buildkite-provenance-test/builds/32",
+      "buildInvocationId": "https://buildkite.com/virtru/buildkite-provenance-test/builds/42",
       "completeness": {
         "arguments": true,
         "environment": false,
         "materials": false
       },
       "reproducible": false,
-      "buildFinishedOn": "2021-10-14T21:10:26Z"
+      "buildFinishedOn": "2021-10-16T00:09:02Z"
     },
     "recipe": {
       "type": "https://buildkite.com/Attestations/BuildkiteBuild@v1",
       "definedInMaterial": 0,
-      "entryPoint": "582d8e7a-d4a8-4961-98da-32a192442dba",
+      "entryPoint": "bWtkaXIgYnVpbGQgJiYgbWtkaXIgcG9zdGJ1aWxkIGVjaG8gJ2J1aWxkIGFydGlmYWN0IDEnID4gYnVpbGQvYXJ0aWZhY3QxLnR4dCBlY2hvICdidWlsZCBhcnRpZmFjdCAyJyA+IGJ1aWxkL2FydGlmYWN0Mi50eHQgZWNobyAnYnVpbGQgYXJ0aWZhY3QgMicgPiBidWlsZC9hcnRpZmFjdDMudHh0IGVjaG8gJ3Bvc3QtYnVpbGQgYXJ0aWZhY3QgMycgPiBwb3N0YnVpbGQvYXJ0aWZhY3QzLnR4dA==",
       "arguments": null,
       "environment": null
     },
@@ -46,7 +52,7 @@
       {
         "uri": "git@github.com:virtru/devhacks.git",
         "digest": {
-          "sha1": "64e280b17f7b6f394e909bbe9f7c40fc686eff2e"
+          "sha1": "5b9604e7a4395830b7ed889afec4174b80492cc0"
         }
       }
     ]
