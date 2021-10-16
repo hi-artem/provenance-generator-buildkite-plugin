@@ -29,22 +29,22 @@
   "predicateType": "https://slsa.dev/provenance/v0.1",
   "predicate": {
     "builder": {
-      "id": "buildkite.com/organizations/virtru/agents/799e9915-85ee-446a-b981-18c89885fc8f"
+      "id": "buildkite.com/organizations/virtru/agents/bffc71c3-b7c0-48a5-8d58-c8671f906b3d"
     },
     "metadata": {
-      "buildInvocationId": "https://buildkite.com/virtru/buildkite-provenance-test/builds/42",
+      "buildInvocationId": "https://buildkite.com/virtru/buildkite-provenance-test/builds/45",
       "completeness": {
         "arguments": true,
         "environment": false,
         "materials": false
       },
       "reproducible": false,
-      "buildFinishedOn": "2021-10-16T00:09:02Z"
+      "buildFinishedOn": "2021-10-16T01:15:51Z"
     },
     "recipe": {
       "type": "https://buildkite.com/Attestations/BuildkiteBuild@v1",
       "definedInMaterial": 0,
-      "entryPoint": "bWtkaXIgYnVpbGQgJiYgbWtkaXIgcG9zdGJ1aWxkIGVjaG8gJ2J1aWxkIGFydGlmYWN0IDEnID4gYnVpbGQvYXJ0aWZhY3QxLnR4dCBlY2hvICdidWlsZCBhcnRpZmFjdCAyJyA+IGJ1aWxkL2FydGlmYWN0Mi50eHQgZWNobyAnYnVpbGQgYXJ0aWZhY3QgMicgPiBidWlsZC9hcnRpZmFjdDMudHh0IGVjaG8gJ3Bvc3QtYnVpbGQgYXJ0aWZhY3QgMycgPiBwb3N0YnVpbGQvYXJ0aWZhY3QzLnR4dA==",
+      "entryPoint": "mkdir build && mkdir postbuild echo 'build artifact 1' > build/artifact1.txt echo 'build artifact 2' > build/artifact2.txt echo 'build artifact 2' > build/artifact3.txt echo 'post-build artifact 3' > postbuild/artifact3.txt",
       "arguments": null,
       "environment": null
     },
@@ -52,7 +52,7 @@
       {
         "uri": "git@github.com:virtru/devhacks.git",
         "digest": {
-          "sha1": "5b9604e7a4395830b7ed889afec4174b80492cc0"
+          "sha1": "d0f1be80245f2e1169e33e47ddb3cc90ac7c1d04"
         }
       }
     ]

@@ -39,7 +39,7 @@ steps:
     artifact_paths:
       - "build/*"
     plugins:
-      - hi-artem/provenance-generator#v1.1.8:
+      - hi-artem/provenance-generator#v1.1.11:
           output-path: "provenance.json"
 ```
 
@@ -56,7 +56,7 @@ steps:
     artifact_paths:
       - "build/*"
     plugins:
-      - hi-artem/provenance-generator#v1.1.8:
+      - hi-artem/provenance-generator#v1.1.11:
           output-path: "provenance.json"
 ```
 
