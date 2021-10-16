@@ -14,7 +14,7 @@ buildkite-agent artifact download "*" local-artifacts --step "$BUILDKITE_JOB_ID"
 
 echo "Generating provenance file using Docker golang container"
 
-buildkite_command_base64=$(echo $BUILDKITE_COMMAND | base64)
+buildkite_command_base64=$(echo -n $BUILDKITE_COMMAND | base64 | tr -d \\n)
 
 docker run -it --rm -v "$(pwd):/plugin" --entrypoint go golang:1.16-alpine \
       run /plugin/lib/main.go \
