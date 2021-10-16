@@ -1,7 +1,8 @@
 package main
 
 import (
-	"crypto/sha256"
+	"bytes"
+"crypto/sha256"
 	"encoding/hex"
 	"encoding/json"
 	"flag"
@@ -158,6 +159,27 @@ func parseFlags() {
 	}
 }
 
+func EscapedMarshal(t interface{}) ([]byte, error) {
+    buffer := &bytes.Buffer{}
+    encoder := json.NewEncoder(buffer)
+    encoder.SetEscapeHTML(false)
+    err := encoder.Encode(t)
+    return buffer.Bytes(), err
+}
+
+func EscapedMarshalIndent(v interface{}, prefix, indent string) ([]byte, error) {
+	b, err := EscapedMarshal(v)
+	if err != nil {
+		return nil, err
+	}
+	var buf bytes.Buffer
+	err = json.Indent(&buf, b, prefix, indent)
+	if err != nil {
+		return nil, err
+	}
+	return buf.Bytes(), nil
+}
+
 func main() {
 	flag.Var(&artifactPath, "artifact_path", "The file or dir path of the artifacts for which provenance should be generated.")
 	parseFlags()
@@ -211,7 +233,7 @@ func main() {
 	// NOTE: At L1, writing the in-toto Statement type is sufficient but, at
 	// higher SLSA levels, the Statement must be encoded and wrapped in an
 	// Envelope to support attaching signatures.
-	payload, _ := json.MarshalIndent(stmt, "", "  ")
+	payload, _ := EscapedMarshalIndent(stmt, "", "  ")
 	fmt.Println("Provenance:\n" + string(payload))
 	if err := ioutil.WriteFile(*outputPath, payload, 0755); err != nil {
 		fmt.Println("Failed to write provenance: %s", err)
