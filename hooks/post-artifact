@@ -4,9 +4,18 @@ set -eo pipefail
 
 starting_directory="$(cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd)"
 
-cd $starting_directory/..
+
+echo "Debug list $starting_directory"
+ls $starting_directory
+
+echo "Debug list $starting_directory/.."
+ls $starting_directory/..
+
+echo "Debug list $starting_directory/../.."
+ls $starting_directory/../..
 
 echo "Prepare to download build artifacts"    
+cd $starting_directory/..
 rm -rf local-artifacts && mkdir local-artifacts 
 
 echo "Downloading build artifacts"    
