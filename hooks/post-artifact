@@ -5,10 +5,8 @@ set -eo pipefail
 starting_directory="$(cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd)"
 
 
-echo "Debug list $starting_directory/../.."
-ls $starting_directory/../lib
-
 echo "Prepare to download build artifacts"    
+
 cd $starting_directory/..
 rm -rf local-artifacts && mkdir local-artifacts 
 
@@ -20,8 +18,7 @@ echo "Generating provenance file using Docker Golang container"
 buildkite_command_escaped=$(echo -n $BUILDKITE_COMMAND | tr '\n' ' ')
 mount_directory=$(pwd)||$PWD
 
-echo "Debug list $mount_directory"
-ls $mount_directory
+echo "Mounted directory from Agent to container: ${mount_directory}"
 
 docker run -it --rm -v "$mount_directory:/plugin" --entrypoint go golang:1.16-alpine \
       run /plugin/lib/main.go \
