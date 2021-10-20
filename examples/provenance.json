@@ -29,17 +29,17 @@
   "predicateType": "https://slsa.dev/provenance/v0.1",
   "predicate": {
     "builder": {
-      "id": "buildkite.com/organizations/virtru/agents/bffc71c3-b7c0-48a5-8d58-c8671f906b3d"
+      "id": "https://buildkite.com/organizations/virtru/agents/3047b584-cbc2-461e-9937-3d62f4ef0946"
     },
     "metadata": {
-      "buildInvocationId": "https://buildkite.com/virtru/buildkite-provenance-test/builds/45",
+      "buildInvocationId": "https://buildkite.com/virtru/buildkite-provenance-test/builds/49",
       "completeness": {
         "arguments": true,
         "environment": false,
         "materials": false
       },
       "reproducible": false,
-      "buildFinishedOn": "2021-10-16T01:15:51Z"
+      "buildFinishedOn": "2021-10-20T20:44:42Z"
     },
     "recipe": {
       "type": "https://buildkite.com/Attestations/BuildkiteBuild@v1",
@@ -50,9 +50,9 @@
     },
     "materials": [
       {
-        "uri": "git@github.com:virtru/devhacks.git",
+        "uri": "git+https://github.com/virtru/devhacks",
         "digest": {
-          "sha1": "d0f1be80245f2e1169e33e47ddb3cc90ac7c1d04"
+          "sha1": "10b69fb6ed618e82399ecc25e06d482478d50411"
         }
       }
     ]
