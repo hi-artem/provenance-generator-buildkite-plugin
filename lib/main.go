@@ -9,8 +9,11 @@ import (
 	"fmt"
 	"io/fs"
 	"io/ioutil"
+	"net/url"
 	"os"
 	"path/filepath"
+	"regexp"
+	"strings"
 	"time"
 )
 
@@ -37,6 +40,125 @@ var (
 	buildContext = flag.String("build_context", "", "The '${build}' context value.")
 	agentContext = flag.String("agent_context", "", "The '${agent}' context value.")
 )
+
+var (
+	// scpSyntax was modified from https://golang.org/src/cmd/go/vcs.go.
+	scpSyntax = regexp.MustCompile(`^([a-zA-Z0-9-._~]+@)?([a-zA-Z0-9._-]+):([a-zA-Z0-9./._-]+)(?:\?||$)(.*)$`)
+
+	// Transports is a set of known Git URL schemes.
+	Transports = NewTransportSet(
+		"ssh",
+		"git",
+		"git+ssh",
+		"http",
+		"https",
+		"ftp",
+		"ftps",
+		"rsync",
+		"file",
+	)
+)
+
+// Parser converts a string into a URL.
+type Parser func(string) (*url.URL, error)
+
+// Parse parses rawurl into a URL structure. Parse first attempts to
+// find a standard URL with a valid Git transport as its scheme. If
+// that cannot be found, it then attempts to find a SCP-like URL. And
+// if that cannot be found, it assumes rawurl is a local path. If none
+// of these rules apply, Parse returns an error.
+func Parse(rawurl string) (u *url.URL, err error) {
+	parsers := []Parser{
+		ParseTransport,
+		ParseScp,
+		ParseLocal,
+	}
+
+	// Apply each parser in turn; if the parser succeeds, accept its
+	// result and return.
+	for _, p := range parsers {
+		u, err = p(rawurl)
+		if err == nil {
+			return u, err
+		}
+	}
+
+	// It's unlikely that none of the parsers will succeed, since
+	// ParseLocal is very forgiving.
+	return new(url.URL), fmt.Errorf("failed to parse %q", rawurl)
+}
+
+// ParseTransport parses rawurl into a URL object. Unless the URL's
+// scheme is a known Git transport, ParseTransport returns an error.
+func ParseTransport(rawurl string) (*url.URL, error) {
+	u, err := url.Parse(rawurl)
+	if err == nil && !Transports.Valid(u.Scheme) {
+		err = fmt.Errorf("scheme %q is not a valid transport", u.Scheme)
+	}
+	return u, err
+}
+
+// ParseScp parses rawurl into a URL object. The rawurl must be
+// an SCP-like URL, otherwise ParseScp returns an error.
+func ParseScp(rawurl string) (*url.URL, error) {
+	match := scpSyntax.FindAllStringSubmatch(rawurl, -1)
+	if len(match) == 0 {
+		return nil, fmt.Errorf("no scp URL found in %q", rawurl)
+	}
+	m := match[0]
+	user := strings.TrimRight(m[1], "@")
+	var userinfo *url.Userinfo
+	if user != "" {
+		userinfo = url.User(user)
+	}
+	rawquery := ""
+	if len(m) > 3 {
+		rawquery = m[4]
+	}
+	return &url.URL{
+		Scheme:   "ssh",
+		User:     userinfo,
+		Host:     m[2],
+		Path:     m[3],
+		RawQuery: rawquery,
+	}, nil
+}
+
+// ParseLocal parses rawurl into a URL object with a "file"
+// scheme. This will effectively never return an error.
+func ParseLocal(rawurl string) (*url.URL, error) {
+	return &url.URL{
+		Scheme: "file",
+		Host:   "",
+		Path:   rawurl,
+	}, nil
+}
+
+// TransportSet represents a set of valid Git transport schemes. It
+// maps these schemes to empty structs, providing a set-like
+// interface.
+type TransportSet struct {
+	Transports map[string]struct{}
+}
+
+// NewTransportSet returns a TransportSet with the items keys mapped
+// to empty struct values.
+func NewTransportSet(items ...string) *TransportSet {
+	t := &TransportSet{
+		Transports: map[string]struct{}{},
+	}
+	for _, i := range items {
+		t.Transports[i] = struct{}{}
+	}
+	return t
+}
+
+// Valid returns true if transport is a known Git URL scheme and false
+// if not.
+func (t *TransportSet) Valid(transport string) bool {
+	_, ok := t.Transports[transport]
+	return ok
+}
 
 type Envelope struct {
 	PayloadType string        `json:"payloadType"`
@@ -225,10 +347,18 @@ func main() {
 	build := context.BuildContext
 	agent := context.AgentContext
 
+	repositoryURL, err := Parse(build.Repository)
+
+	if err != nil {
+		panic(err)
+	}
+
+	materialsURI := "git+https://" + repositoryURL.Host + "/" + strings.Replace(repositoryURL.Path, ".git", "", 1)
+
 	stmt.Predicate.Metadata.BuildInvocationId = build.BuildURL
 	stmt.Predicate.Recipe.EntryPoint = build.Command
-	stmt.Predicate.Materials = append(stmt.Predicate.Materials, Item{URI: build.Repository, Digest: DigestSet{"sha1": build.Commit}})
-	stmt.Predicate.Builder.Id = "buildkite.com/organizations/" + agent.Organization + "/agents/" + agent.ID
+	stmt.Predicate.Materials = append(stmt.Predicate.Materials, Item{URI: materialsURI, Digest: DigestSet{"sha1": build.Commit}})
+	stmt.Predicate.Builder.Id = "https://buildkite.com/organizations/" + agent.Organization + "/agents/" + agent.ID
 
 	// NOTE: At L1, writing the in-toto Statement type is sufficient but, at
 	// higher SLSA levels, the Statement must be encoded and wrapped in an
