@@ -2,7 +2,7 @@ package main
 
 import (
 	"bytes"
-"crypto/sha256"
+	"crypto/sha256"
 	"encoding/hex"
 	"encoding/json"
 	"flag"
@@ -160,11 +160,11 @@ func parseFlags() {
 }
 
 func EscapedMarshal(t interface{}) ([]byte, error) {
-    buffer := &bytes.Buffer{}
-    encoder := json.NewEncoder(buffer)
-    encoder.SetEscapeHTML(false)
-    err := encoder.Encode(t)
-    return buffer.Bytes(), err
+	buffer := &bytes.Buffer{}
+	encoder := json.NewEncoder(buffer)
+	encoder.SetEscapeHTML(false)
+	err := encoder.Encode(t)
+	return buffer.Bytes(), err
 }
 
 func EscapedMarshalIndent(v interface{}, prefix, indent string) ([]byte, error) {
